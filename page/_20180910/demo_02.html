@@ -1,29 +1,104 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta charset="UTF-8">
 		<title>Demo 02</title>
 		<script type="text/javascript" src="../../js/vue.js"></script>
 		<script type="text/javascript">
+			// 定义全局变量
+			var vm = null;
 			window.onload = function() {
-				new Vue({
-					el:"#app",
+				var v_msg = {
+					msg : "Hello World!"
+				};
+//				Object.freeze(v_msg);// 阻止修改数据属性的值-解除了数据绑定
+				/**
+				 * 如果变量声明在window.onload的函数内
+				 * 则此时变量的作用域不是全局的
+				 * 当试图在浏览器控制台操作数据时因找不到实例对象会报错
+				 */
+				vm = new Vue({
+					el: "#app",
 					data: {
-						message:"Hello World!"
+						message: v_msg,
+						msg_title: '页面加载于 ' + new Date().toLocaleString(),
+						see: 1,
+						arr:[{
+							title:"JavaScript"
+						},{
+							title:"Java"
+						},{
+							title:"CSS"
+						}],
+						newTodo:"",
+						todos:[{
+							text:"Add some todos"
+						}]
 					},
 					methods: {
-						reverseMsg:function() {
-							this.message = this.message.split('').reverse().join('');
+						/**
+						 * 将字符串反转
+						 */
+						reverseMsg: function() {
+							this.message.msg = this.message.msg.split('').reverse().join('');
+						},
+						addTodo:function() {
+							var text = this.newTodo.trim();
+							if (text) {
+								this.todos.push({text: text});
+								this.newTodo = "";
+							}
+						},
+						removeTodo: function(index) {
+							this.todos.splice(index, 1);
 						}
 					}
 				});
 			}
 		</script>
 	</head>
+
 	<body>
 		<div id="app">
-			<p>{{message}}</p>
-			<button v-on:click="reverseMsg">Reverse Msg</button>
+			<p>
+				<p>{{message.msg}}</p>
+				<!-- 双向绑定 v-model -->
+				<input type="text" v-model="message.msg" />
+			</p>
+			<p>
+				<!-- 点击事件 -->
+				<button v-on:click="reverseMsg">Reverse Msg</button>
+			</p>
+			<p>
+				<!-- 元素绑定 -->
+				<!--  v-bind用于绑定HTML特性 -->
+				<span v-bind:title="msg_title">
+	    			试试绑定元素特性-title-鼠标悬停
+	  			</span>
+			</p>
+			<p v-if="see === 1">
+				<!-- 条件判断 -->
+  				<span>条件判断是否展示</span>
+			</p>
+			<p>
+				<!-- for 循环 -->
+				<ul>
+					<li v-for="item in arr">{{item.title}}</li>
+				</ul>
+			</p>
+			<p>
+				<!-- 回车键按下时执行添加方法 -->
+				<input type="text" v-model="newTodo" v-on:keyup.enter="addTodo" />
+				<ul>
+					<li v-for="(todo, index) in todos">
+						<span>{{todo.text}}</span>
+						<!-- 删除操作 -->
+						<button v-on:click="removeTodo(index)">X</button>
+					</li>
+				</ul>
+			</p>
 		</div>
 	</body>
+
 </html>

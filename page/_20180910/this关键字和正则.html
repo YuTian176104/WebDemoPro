@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>this关键字和正则</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+	</head>
+
+	<body>
+		<h3>This关键字和正则</h3>
+		<ul>
+			<li>1111</li>
+			<li>2222</li>
+			<li>3333</li>
+			<li>4444</li>
+		</ul>
+		<br />
+		<h3 id="content"></h3>
+		<br />
+		<div class="lists"></div>
+		<script type="text/javascript">
+			/**
+			 * this关键字 指向调用函数的对象(函数的拥有者)
+			 * 1.函数中引用
+			 * 2.对象调用
+			 * 3.构造函数调用
+			 * 4.this指向
+			 */
+			$("ul li").click(function() {
+				$(this).css("color", "red").siblings("li").css("color", "black");
+			});
+
+			/**
+			 * 1.函数中引用
+			 */
+			/*var x = 1;
+			function test() {
+				this.x = 0;
+			}
+			test();
+			console.log(x);*/
+
+			/**
+			 * 2.对象中调用 this指当前对象
+			 */
+			/*var o = {};
+			o.a = 1;
+			o.action = function() {
+				return this.a;
+			};
+			console.log(o.action());*/
+
+			/**
+			 * 对象中调用外部函数
+			 * 外部函数中的this指向的是调用函数的对象
+			 */
+			/*function test() {
+				return this.a;
+			}
+			var o = {};
+			o.a = 1;
+			o.action = test;
+			console.log(o.action());*/
+
+			/**
+			 * 3.改变this的指向
+			 * call(this, name, age, ...)/apply(this, [])
+			 */
+			
+			/**
+			 * call()/apply()的使用
+			 * call()/apply()无参时默认是window对象
+			 */
+			/*function add(a, b) {
+				alert(a + b);
+			}
+			function sub(a, b) {
+				alert(a - b);
+			}
+			add.call(sub, 1, 1);
+			sub.apply(add, [2,1]);*/
+			
+			/*var a = "111";
+			function test() {
+				return this.a;
+			}
+			var o = {};
+			o.a = 1;
+			o.action = test;
+			console.log(o.action.call());
+			console.log(o.action.apply());
+
+			console.log(o.action.call(o));
+			console.log(o.action.apply(o));*/
+
+			/**
+			 * 4.构造函数中调用
+			 * 	指向的是实例化后的对象
+			 */
+			/*function Fun(name, age) {
+				this.name = name;
+				this.age = age;
+			}
+			var obj = new Fun("john", 23);
+			console.log(obj.name);
+			var obj2 = new Fun("hha", 23);
+			console.log(obj2.name);*/
+			
+			/**
+			 * 例子-注意:自调函数中this指向的是window对象
+			 */
+			/*var num = 1;
+			var obj = {
+				num : 2,
+				showNum : function() {
+					this.num = 3;
+					// 自调函数-this指向的是window
+					(function() {
+						console.log(this.num);
+					})();
+					console.log(this.num);
+				}
+			};
+			obj.showNum();*/
+			
+			/**
+			 * 正则表达式
+			 * 	^	表示字符串的开始
+			 * 	$	表示字符串的结束
+			 */
+//			var filter = /^1\*\(2\+4\)=6$/;
+			// 转义字符使用\
+			/*var filter2 = new RegExp("^[A-Za-z0-9]*@[a-z0-9]*.(com|net|org)$");
+			var value = "1170286283@qq.org";*/
+//			var filter2 = new RegExp("^1\\*\\(2\\+4\\)=6$");
+//			var filter2 = new RegExp("^([\u4e00-\u9fa5]*)|([,.。！!?]*)$");
+			// 转义字符使用\\
+//			var value = "哈喽,你好!请问，你是谁?";
+//			var value = "1*(2+4)=6";
+			/*if (filter2.test(value)) {
+				console.log("ok");
+				$("#content").html(value);
+			} else {
+				console.log("not");
+			}*/
+			
+			/**
+			 * \b	匹配一个单词的边界
+			 * \B	匹配一个单词的非边界
+			 * 
+			 * \d	匹配一个数字字符
+			 * \D	匹配一个非数字字符
+			 * 
+			 * \w	匹配字母数字下划线
+			 * \W	匹配除字母数字下划线
+			 * 
+			 * ^	表示字符串的开始
+			 * $	表示字符串的结束
+			 * []	匹配指定字符中的一个	[A-Za-z]
+			 * [^xyz] 不匹配指定字符中的任何一个
+			 * +	前一模式可以被重复一个或者n次
+			 * *	前一模式可以被重复0次或者n次
+			 * ?	前一模式可以被重复0次或者1次
+			 * {x}	前一模式必须被重复x次
+			 * {x,y}	前一模式可以被重复x到y次
+			 * {x,}	前一模式被重复至少x次
+			 * () 子表达式
+			 * |	分支	用来指定几个规则只要匹配一个规则即可匹配
+			 * \	转义符号-用来匹配那些具有特殊含义的字符
+			 * [\u4e00-\u9fa5]
+			 * 
+			 */
+			
+			var data = [{
+				name:'AAA',
+				child:[{
+					name:'a1',
+					child:[{
+						name:'a1-1',
+						child:[{
+							name:'a1-1-1'
+						},{
+							name:'a1-1-2'
+						}]
+					},{
+						name:'a1-2',
+						child:[{
+							name:'a1-2-1'
+						},{
+							name:'a1-2-2'
+						}]
+					},{
+						name:'a1-3',
+						child:[{
+							name:'a1-3-1'
+						}]
+					}]
+				},{
+					name:'a2',
+					child:[{
+						name:'a2-1',
+						child:[{
+							name:'a2-1-1'
+						}]
+					},{
+						name:'a2-2',
+						child:[{
+							name:'a2-2-1'
+						},{
+							name:'a2-2-2'
+						}]
+					}]
+				}]
+			},{
+				name:'BBB',
+				child:[{
+					name:'b1',
+					child:[{
+						name:'b1-1'
+					}]
+				},{
+					name:'b2'
+				},{
+					name:'b3'
+				}]
+			},{
+				name:'CCC',
+				child:[{
+					name:'c1'
+				},{
+					name:'c2'
+				}]
+			}];
+			
+			var lists = $(".lists");
+			function build(element, arr) {
+				var ul = $("<ul></ul>");
+				for (var i = 0, max = arr.length; i < max; i++) {
+					var li = $("<li>" + arr[i].name + "</li>");
+					li.appendTo(ul);
+					if (arr[i].child) {
+						build(li, arr[i].child);
+					}
+				}
+				element.append(ul);
+			}
+			build(lists, data);
+		</script>
+	</body>
+
+</html>

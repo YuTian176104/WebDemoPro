@@ -4,11 +4,59 @@
 		<meta charset="UTF-8">
 		<title>Demo 01</title>
 		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js" ></script>
 		<script type="text/javascript">
+			// 定义组件
+			var appNav = Vue.extend({
+				template : "<div>appNav</div>"
+			});
+			var appView = Vue.extend({
+				template: "<div>-----<app-content></app-content><app-sidebar></app-sidebar>-----</div>"
+			});
+			var appSidebar = Vue.extend({
+				template: "<div>appSidebar</div>"
+			});
+			var appContent = Vue.extend({
+				template: "<div>appContent</div>"
+			});
+			// 注册
+			Vue.component("app-nav", appNav);
+			Vue.component("app-sidebar", appSidebar);
+			Vue.component("app-content", appContent);
+			Vue.component("app-view", appView);
 			
+			var vm = null;
+			$(document).ready(function() {
+				var msg = "Ni Hao!";
+				vm = new Vue({
+					el:"#app",
+					data:{
+						msg:"",
+						v_msg:"Hello!"
+					},
+					methods: {
+						init: function() {
+							this.msg = this.v_msg;
+							//this.msg = msg;// 不使用this关键字时msg是window对象的变量
+						}
+					},
+					created: function() {
+						this.init();
+					}
+				});
+			});
 		</script>
 	</head>
 	<body>
-		
+		<div id="app">
+			<h3>{{msg}}</h3>
+			
+			<!-- 自定义组件Demo -->
+			<p>
+				<h2>自定义组件Demo</h2>
+				<app-nav></app-nav>
+				<app-view></app-view>
+			</p>
+		</div>
 	</body>
 </html>

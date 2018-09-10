@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>demo01的课后作业</title>
+		<script type="text/javascript" src="../js/vue.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				new Vue({
+					el:"#demo",
+					data:{
+						sum:0,
+						residue:0,
+						newData:"",
+						data:[{
+							name:"外套",
+							status:false
+						}]
+					},
+					methods:{
+						addFun:function() {
+							this.data.push({name:this.newData,status:false});
+							this.newData = "";
+							this.init();
+						},
+						yesFun:function(item) {
+							item.status = true;
+							this.init();
+						},
+						noFun:function(item) {
+							item.status = false;
+							this.init();
+						},
+						init:function() {
+							this.residue = 0;
+							for (var i in this.data) {
+								if (this.data[i].status === false) {
+									this.residue += 1;
+								}
+							}
+						}
+					},
+					created:function() {
+						this.init();
+					}
+				});
+			}
+		</script>
+		<style type="text/css">
+			table thead td {
+				font-size: 20px;
+				font-weight: bold;
+				width: 200px;
+			}
+			table tbody td {
+				align-content: center;
+				width: 200px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="demo">
+			<p>
+				<span style="font-size: 30px;">Demo的购物清单</span>
+				<span>清单总数</span><span>{{data.length}}</span>
+				<span>未采购数</span><span>{{residue}}</span>
+			</p>
+			<p>
+				<input v-model="newData" /><button v-on:click="addFun" style="margin-left: 20px;">添加</button>
+			</p>
+			<p>
+				<table>
+					<thead>
+						<td>物品名称</td>
+						<td>是否采购</td>
+						<td>状态</td>
+					</thead>
+					<tbody>
+						<tr v-for="item in data">
+							<td>{{item.name}}</td>
+							<td>
+								<input type="checkbox" v-if="item.status === false" v-on:click="yesFun(item)" />
+								<input type="checkbox" v-else checked="checked" v-on:click="noFun(item)" />
+							</td>
+							<td>{{item.status}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</p>
+		</div>
+	</body>
+
+</html>

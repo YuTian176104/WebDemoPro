@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>vue demo 01</title>
+		<script type="text/javascript" src="../js/vue.js"></script>
+		<script type="text/javascript">
+			/**
+			 * 表达式{{}} 输出数据
+			 * 指令-扩张了html标签
+			 * 双向数据绑定
+			 */
+			window.onload = function() {
+				new Vue({
+					// 2.0不允许挂载到html body 元素上
+					el: "#demo",
+					data: {
+						msg: "Hello World",
+						name: "ZHENG.Q",
+						age: 28,
+						flag: true,
+						arr: ['a', 'b', 'c', 'd'],
+						obj: {
+							id: 1,
+							name: '张三',
+							age: 29
+						},
+						objArr: [{
+							name:'a1',
+							age:10
+						}, {
+							name:'a2',
+							age:20
+						}, {
+							name:'a3',
+							age:30
+						}]
+					},
+					methods:{
+						clickFun:function() {
+							console.log("click");
+							this.obj.name = "click";
+						},
+						overFun:function() {
+							this.msg = "over";
+						},
+						outFun:function() {
+							this.msg = "out";
+						},
+						dbClickFun:function() {
+							this.msg = "Hello World!";
+						}
+					}
+				});
+			}
+		</script>
+	</head>
+
+	<body>
+		<div id="demo">
+			<h3>{{msg}}</h3>
+			<h3>{{flag}}</h3>
+			<h3>{{obj.name}}</h3>
+			<h3>{{objArr}}</h3>
+			
+			<!-- 
+				双向数据绑定 
+				v-model表单的value值
+			-->
+			<h2>{{obj.name}}</h2>
+			<input type="text" v-model="obj.name" />
+			
+			<!--
+				v-for循环,用于需要循环的元素上
+			-->
+			<!--
+				循环数组
+			-->
+			<h3>循环数组</h3>
+			<ul>
+				<li v-for="ar in arr">
+					{{ar}}
+				</li>
+			</ul>
+			<ul>
+				<li v-for="(v,k) in arr" v-if="k > 1">
+					{{v}}--->>>>>{{k}}
+				</li>
+			</ul>
+			<!--
+				循环对象
+			-->
+			<h3>循环对象</h3>
+			<ul>
+				<li v-for="(v,k) in obj">
+					{{v}}--->>>>>{{k}}
+				</li>
+			</ul>
+			<!--
+				循环数组对象
+			-->
+			<h3>循环数组对象</h3>
+			<ul>
+				<li v-for="v in objArr">
+					{{v.name}}--{{v.age}}
+				</li>
+			</ul>
+			<ul>
+				<li v-for="(v,k) in objArr">
+					{{v.name}}--{{v.age}}-->>>>>{{k}}
+				</li>
+			</ul>
+			
+			<!--
+            	v-on:
+            	@
+            -->
+            <button v-on:click="clickFun">点击</button>
+            <button @click="clickFun">点击@</button>
+            <button v-on:mouseover="overFun" v-on:mouseout="outFun" v-on:dblclick="dbClickFun">{{msg}}</button>
+            
+            <!--
+            	v-show/v-if	显示隐藏
+            	常用v-if
+            -->
+            <button v-show="flag">show</button>
+            <p v-if="age > 30">{{age}}</p>
+            <p v-else>{{name}}</p>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 03 Vue实例</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			/**
+			 * 扩展Vue实例
+			 */
+			var MyVue = Vue.extend({
+				template: "<div><br/>这里是扩展后的Vue组件实例</div>"
+			});
+			/**
+			 * Vue扩展高级使用
+			 */
+			var Author = Vue.extend({
+				template:"<p><a :href='url'>{{author}} & {{name}}</a></p>",
+				data: function() {
+					return {
+						author: "zheng.q",
+						url: "http://127.0.0.1:8020/WebDemoPro/page/201809/demo_03_vue%E5%AE%9E%E4%BE%8B.html"
+					};
+				},
+				props: ['name']
+			});
+			
+			var data = {
+				msg: "Hello World!"
+			};
+			var vm = null;
+			$(function() {
+				
+				/**
+				 * 实例化Vue扩展实例
+				 */
+				new MyVue().$mount("#myVue");
+				new Author({
+					el:"author",
+					propsData: {
+						name : "Alias"
+					}
+				});
+				new Author({
+					el:"#author",
+					propsData: {
+						name : "Alias"
+					}
+				});
+				
+				vm = new Vue({
+					el: "#app",
+					data: data,// Vue实例代理data对象中的属性
+					methods: {
+						init: function() {
+							
+						}
+					},
+					created: function() {
+						this.init();
+					}
+				});
+				console.log(vm);
+				console.log(data.msg === vm.msg);
+				/*data.msg = "Ni Hao!";
+				console.log(vm.msg);*/
+				/*vm.msg = "Ni Hao!";
+				console.log(data.msg);*/
+				
+				/**
+				 * Vue实例方法举例
+				 * Vue对象的实例属性和实例方法都以$前缀开头以便与代理的属性和方法区分
+				 */
+				vm.$watch('msg', function(newVal, oldVal) {
+					console.log("oldVal: " + oldVal);
+					console.log("newVal: " + newVal);
+				});
+				
+				/**
+				 * JavaScript中的构造器
+				 * Person构造函数
+				 * @param {Object} gender
+				 */
+				function Person(gender) {
+					this.gender = gender;
+				}
+				Person.prototype.getGender = function() {
+					// document.write("this.gender: " + this.gender);
+					return this.gender;
+				}
+				var person = new Person("男");
+				// alert(person.getGender());
+				// document.write(person.getGender());
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<p>{{msg}}</p>
+			<input type="text" v-model="msg" />
+		</div>
+		<!--
+			Vue扩展实例对应的HTML元素
+		-->
+		<div id="myVue"></div>
+		<author></author>
+		<div id = "author"></div>
+	</body>
+
+</html>

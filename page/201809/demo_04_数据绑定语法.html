@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 04 数据绑定语法</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			var vm = null;
+			$(function() {
+				/**
+				 * 过滤器-首字母大写
+				 */
+				Vue.filter('capitalize', function (value) {
+  					if (!value) return ''
+  					value = value.toString()
+  					return value.charAt(0).toUpperCase() + value.slice(1)
+				});
+				/**
+				 * 过滤器-字母转大写
+				 */
+				Vue.filter('uppercase', function(value) {
+  					if (!value) { return ''}
+				  	value = value.toString()
+				  	return value.toUpperCase();
+				});
+				/**
+				 * 过滤器-首字母转小写
+				 */
+				Vue.filter('lowercase', function(value) {
+  					if (!value) { return ''}
+				  	value = value.toString()
+				  	return value.charAt(0).toLowerCase() + value.slice(1)
+				});
+				/**
+				 * 多个参数的过滤器
+				 */
+				Vue.filter('myFilter', function (value, flag) {
+  					if (!value) return ''
+  					value = value.toString()
+  					if (flag == "SD") {
+  						return value.charAt(0).toUpperCase() + value.slice(1)
+  					} else if (flag == "D") {
+  						return value.toUpperCase();
+  					} else if (flag == "SX") {
+  						return value.charAt(0).toLowerCase() + value.slice(1)
+  					} else {
+  						return value;
+  					}
+				});
+				
+				vm = new Vue({
+					el: "#app",
+					data: {
+						msg: "Hello World!",
+						msg_html: "<a href='###'>跳转</a>",
+						cur_language:"cn",
+						v_msg: "这里是Vu	e的世界",
+						id: 9000,
+						v_num: 1,
+						v_msg_1: "are you?",
+						url:"https://www.baidu.com",
+						url_name:"百度"
+					},
+					methods: {
+						init: function() {
+
+						},
+						change: function() {
+							if (this.cur_language === "en") {
+								this.cur_language = "cn";
+							} else {
+								this.cur_language = "en";
+							}
+						}
+					},
+					created: function() {
+						this.init();
+					},
+					components:{
+						cn: {
+							template: "<p>你好！</p>"
+						},
+						en: {
+							template: "<p>Hi!</p>"
+						}
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<h3 v-once v-text="msg"></h3>
+			<h3>{{msg}}</h3>
+			<p><input type="text" v-model="msg" /></p>
+			<p v-html="msg_html"></p>
+			
+			<p>
+				<!--
+					使用is完成组件的动态绑定
+				-->
+				<component v-bind:is="cur_language"></component>
+				<button v-on:click="change">切换语言</button>
+			</p>
+			<div v-bind:id="'div-' + id" v-if="id===9001">9001</div>
+			<div v-bind:id="'div-' + id" v-else>9000</div>
+			<p>
+				{{v_num + 1}}
+			</p>
+			<p>
+				{{v_num === 1 ? "Hello" : "你好"}}
+			</p>
+			<p>
+				{{msg.split('').reverse().join('')}}
+			</p>
+			<!--
+				使用过滤器 capitalize 第一个字母转大写
+				过滤器的串联使用
+			-->
+			<p>{{v_msg_1 | capitalize | uppercase | lowercase}}</p>
+			<p>{{v_msg_1 | myFilter('SD')}}</p>
+			<p>{{v_msg_1 | _.capitalize}}</p>
+			<p><a v-bind:href="url" v-text="url_name"></a></p>
+		</div>
+	</body>
+
+</html>

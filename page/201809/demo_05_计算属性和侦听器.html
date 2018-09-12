@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 05 计算属性和侦听器</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript" src="../../js/axios.js" ></script>
+		<script type="text/javascript" src="../../js/lodash.js" ></script>
+		<script type="text/javascript">
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						msg: "Hello World!",
+						firstName: "",
+						lastName: "",
+						fullName: "",
+						question: "",
+						answer: "I cannot give you an answer until you ask a question!"
+					},
+					methods: {
+						init: function() {
+							/**
+							 * _.debounce是一个通过Lodash限制操作频率的函数
+							 * 在最后一次调用函数的500毫秒后执行-此处是等待输入停止500毫秒后执行getAnswer()函数
+							 * 
+							 */
+							this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
+						},
+						reversedMsgFun: function() {
+							return this.msg.split('').reverse().join('');
+						},
+						getAnswer: function() {
+							if (this.question.indexOf('?') === -1) {
+								this.answer = 'Questions usually contain a question mark. ;-)';
+        						return;
+							}
+							this.answer = "Thinking...";
+							var vm = this;
+							axios.get("https://yesno.wtf/api")
+								.then(function(response) {
+									vm.answer = _.capitalize(response.data.answer);
+								})
+								.catch(function(error) {
+									vm.answer = "Error! Could not reach the API. " + error;
+								});
+						}
+					},
+					created: function() {
+						this.init();
+					},
+					/**
+					 * 计算属性
+					 */
+					computed: {
+						reversedMsg: function() {
+							/**
+							 * 注意：计算属性会基于它们的依赖进行缓存,只有在相关依赖发生变化时它们才会重新求值
+							 * 而定义的函数则每次调用都会重新求值
+							 */
+							return this.msg.split('').reverse().join('');
+						},
+						now_time: function() {
+							return Date.now();
+						},
+						full_name: function() {
+							return this.firstName + " " + this.lastName;
+						},
+						total_name: {
+							get: function() {
+								return this.firstName + " " + this.lastName;
+							},
+							set: function(newValue) {
+								var names = newValue.trim().split(" ");
+								if (!newValue.trim()) {
+									this.firstName = "";
+									this.lastName = "";
+								} else {
+									this.firstName = names[0];
+									if (names.length !== 1) {
+										this.lastName = names[names.length - 1];
+									}
+								}
+							}
+						}
+					},
+					/**
+					 * 侦听器
+					 * 当执行异步或执行开销较大的操作时,使用侦听器
+					 */
+					watch: {
+						firstName: function(val) {
+							this.fullName = val + "-" + this.lastName;
+						},
+						lastName: function(val) {
+							this.fullName = this.firstName + "-" + val;
+						},
+						/**
+						 * 侦听question属性-如果question的值发生改变,该函数就会执行
+						 */
+						question: function() {
+							this.answer = 'Waiting for you to stop typing...';
+							this.debouncedGetAnswer();
+						}
+					}
+				});
+				console.log(vm.reversedMsg);
+				vm.msg = "Good";
+				console.log(vm.reversedMsg);
+				console.log(vm.reversedMsgFun());
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<p>
+				<h3>The msg is: "{{msg}}"</h3>
+				<h3>The reverse msg is: "{{reversedMsg}}"</h3>
+				<h3>The reverse msg is: "{{reversedMsgFun()}}"</h3>
+				<h3>Now is: {{now_time}}</h3>
+			</p>
+			<p>
+				<input v-model="firstName" type="text"/><br />
+				<input v-model="lastName" type="text"/><br />
+				<h3>{{fullName}}</h3>
+				<h4>{{full_name}}</h4>
+				<input type="text" v-model="total_name" />
+			</p>
+			
+			<p>
+				Ask a yes/no question: <input v-model="question">
+			</p>
+			<p>{{ answer }}</p>
+		</div>
+	</body>
+
+</html>

@@ -50,7 +50,9 @@
 							id: 3,
 							title: "Mow the lawn"
 						}],
-						nextTodoId: 4
+						nextTodoId: 4,
+						v_flag: false,
+						v_flag_one: false
 					},
 					methods: {
 						init: function() {
@@ -181,6 +183,12 @@
 				<li is="todo-item" v-for="(todo, index) in todos" v-bind:key="todo.id"
 					v-bind:title="todo.title" v-on:remove="todos.splice(index, 1)"></li>
 			</ul>
+			
+			<div v-if="v_flag">
+				<div v-if="v_flag_one">Two</div>
+				<div v-else>False</div>
+			</div>
+			<div v-else>One False</div>
 		</div>
 	</body>
 

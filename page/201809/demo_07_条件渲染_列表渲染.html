@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 07 条件渲染_列表渲染</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			var vm = null;
+			$(function() {
+				
+				/**
+				 * 定义组件-示例组件中v-for的使用
+				 * $emit-触发当前实例上的事件,这里是单击触发remove事件
+				 */
+				Vue.component("todo-item", {
+					template: '<li>{{title}}<button v-on:click="$emit(' + "'remove'" + ')">Remove</button></li>',
+					props: ['title']
+				});
+				
+				vm = new Vue({
+					el: "#app",
+					data: {
+						v_show: true,
+						login_type: "",
+						loginName: "",
+						items: [{
+							id: 1,
+							name: "张三"
+						},{
+							id: 2,
+							name: "李四"
+						},{
+							id: 3,
+							name: "王五"
+						}],
+						arrs: ['a', 'b', 'c', 'd'],
+						obj: {
+							a: "a"
+						},
+						newTodoText: "",
+						todos: [{
+							id: 1,
+							title: "Do the dishes"
+						},{
+							id: 2,
+							title: "Take out the trash"
+						},{
+							id: 3,
+							title: "Mow the lawn"
+						}],
+						nextTodoId: 4
+					},
+					methods: {
+						init: function() {
+							this.login_type = "username";
+						},
+						changeLoginType: function() {
+							this.login_type = this.login_type === 'username' ? 'email' : 'username';
+						},
+						addNewTodo: function() {
+							this.todos.push({
+								id: this.nextTodoId++,
+								title: this.newTodoText
+							});
+							this.newTodoText = "";
+						}
+					},
+					created: function() {
+						this.init();
+					}
+				});
+				vm.arrs[1] = 'e';// 不是响应式的
+//				Vue.set(vm.arrs, 1, 'e');// 响应式的
+				vm.$set(vm.arrs, 1, 'e');// 响应式的
+				/**
+				 * 对于已经创建的实例，Vue 不能动态添加根级别的响应式属性。
+				 * 但是，可以使用 Vue.set(object, key, value) 方法向嵌套对象添加响应式属性。
+				 */
+//				vm.b = 2;// 不是响应式的
+				vm.obj.b = "b";
+				vm.obj.a = "aa";
+				vm.obj.name = "张三";
+				Vue.set(vm.obj, 'age', 34);
+				vm.$set(vm.obj, 'address', '河北省');
+				vm.obj = {};
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<h3 v-if="v_show">SHOW</h3>
+			<h3 v-else>HIDE</h3>
+			<template v-if="v_show">
+				<ul>
+					<li>张三</li>
+					<li>李四</li>
+					<li>王五</li>
+				</ul>
+			</template>
+			<p>
+				<div v-if="Math.random() > 0.5">Now you see me.</div>
+				<div v-else>Now you don't.</div>
+			</p>
+			
+			<p>
+				<!--
+					Vue 会尽可能高效地渲染元素，通常会复用已有元素而不是从头开始渲染
+					用key管理可复用元素示例
+				-->
+				<template v-if="login_type === 'username'">
+					<label>Username</label>
+					<input type="text" placeholder="Enter you username." v-model="loginName"
+						key="username-input" />
+				</template>
+				<template v-else>
+					<label>Email</label>
+					<input type="text" placeholder="Enter you email." v-model="loginName"
+						key="email-input" />
+				</template>
+				<!--
+					v-show
+					不能用在template元素上, 只用于显示隐藏始终会渲染在DOM中
+				-->
+				<div v-show="login_type === 'username'">
+					<label>Username</label>
+					<input type="text" placeholder="Enter you username." />
+				</div>
+				<div v-show="login_type === 'email'">
+					<label>Email</label>
+					<input type="text" placeholder="Enter you email." />
+				</div>
+				<button v-on:click="changeLoginType">Change Login</button>
+			</p>
+			<p>
+				<!--
+					一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。
+					因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好
+				-->
+			</p>
+			<!--
+				列表渲染
+			-->
+			<p>
+				<ul>
+					<li v-for="item in items" v-bind:key="item.id">{{item.name}}</li>
+				</ul>
+				<div v-for="item in items" :key="item.id">{{item.name}}</div>
+			</p>
+			<p>
+				<div v-for="item in arrs">{{item}}</div>
+			</p>
+			<p>
+				<h3>{{obj.a}}</h3>
+				<h3>{{obj.b}}</h3>
+				<h3>{{obj.name}}</h3>
+				<h3>{{obj.age}}</h3>
+				<h3>{{obj.address}}</h3>
+				<input type="text" v-model="obj.address" />
+			</p>
+			
+			<!-- 组件中v-for的使用示例 -->
+			<!--
+				addNewTodo-表单提交调用的方法
+				submit.prevent
+				提交表单不重载页面
+			-->
+			<form v-on:submit.prevent="addNewTodo">
+				<label for="new-todo">Add a todo</label>
+				<input v-model="newTodoText" id="new-todo" placeholder="E.g. Feed the cat" />
+				<button type="submit">Add</button>
+			</form>
+			<ul>
+				<!--
+					is="todo-item"与使用<todo-item></todo-item>效果是一样的, 但是可以避免一些潜在的浏览器解析错误
+					v-bind:title="todo.title" 将title参数传入模板props的title
+					v-on:remove="todos.splice(index, 1)" 对应模板中定义的$emit事件绑定
+				-->
+				<li is="todo-item" v-for="(todo, index) in todos" v-bind:key="todo.id"
+					v-bind:title="todo.title" v-on:remove="todos.splice(index, 1)"></li>
+			</ul>
+		</div>
+	</body>
+
+</html>

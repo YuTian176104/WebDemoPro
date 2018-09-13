@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 08 事件处理</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						counter : 0,
+						name: "Vue.js",
+						keyMsg: ""
+					},
+					methods: {
+						init: function() {
+							
+						},
+						greet: function(event) {
+							alert("Hello " + this.name + "!");
+							/**
+							 * event是原生DOM事件
+							 */
+							console.log(event);
+							if (event) {
+								alert(event.target.tagName);
+							}
+						},
+						say: function(message) {
+							alert(message);
+						},
+						warn: function(message, event) {
+							console.log(event);
+							if (event) {
+								// 阻止元素发生默认的行为, (例如:当点击提交按钮时阻止提交表单)
+								event.preventDefault();
+							}
+							alert(message);
+						},
+						say2: function(message, event) {
+							if (event) {
+								event.preventDefault();
+							}
+							alert(message);
+						},
+						sayKeyMsg: function() {
+							alert(this.keyMsg);
+						}
+					},
+					created: function() {
+						this.init();
+					},
+					computed: {
+						
+					}
+				});
+				// vm.greet();
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<p>
+				<!--
+					监听事件
+				-->
+				<button v-on:click="counter += 1">Add</button>
+				<h4>The button above has been clicked {{counter}} times.</h4>
+			</p>
+			<p>
+				<!--
+					事件处理方法
+				-->
+				<button v-on:click="greet">Greet</button>
+			</p>
+			<p>
+				<!--
+					内联处理器中的方法
+				-->
+				<button v-on:click="say('hi')">Say hi</button>
+				<!--
+					使用特殊变量$event将DOM原生事件传入方法中
+				-->
+				<button v-on:click="warn('Form cannot be submitted yet.', $event)">Submit</button>
+			</p>
+			<p>
+				<!--
+					事件修饰符
+				-->
+				<a href="https://www.baidu.com" v-on:click="say2('阻止元素的默认行为', $event)">https://www.baidu.com</a>
+				<a href="https://www.baidu.com" v-on:click.prevent="say('阻止元素的默认行为')">https://www.baidu.com</a>
+			</p>
+			<p>
+				<!--
+					按键修饰符
+				-->
+				<input type="text" v-on:keyup.13="sayKeyMsg" v-model="keyMsg"/>
+			</p>
+		</div>
+	</body>
+
+</html>

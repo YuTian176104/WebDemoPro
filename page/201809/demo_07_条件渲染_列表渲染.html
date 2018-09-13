@@ -52,7 +52,17 @@
 						}],
 						nextTodoId: 4,
 						v_flag: false,
-						v_flag_one: false
+						v_flag_one: false,
+						names: [
+							'Jenson',
+							'Stanley',
+							'Darcie',
+							'Luna',
+							'alice',
+							'Alina',
+							'张三'
+						],
+						v_name: ""
 					},
 					methods: {
 						init: function() {
@@ -71,6 +81,27 @@
 					},
 					created: function() {
 						this.init();
+					},
+					computed: {
+						/**
+						 * 计算属性
+						 * 检索姓名
+						 * 根据文本框输入从姓名列表中检索出与姓名片段所匹配的结果
+						 */
+						filterNameByStr: function() {
+							var newArr = [];
+							var _this = this;
+							if (this.v_name) {
+								for (index in this.names) {
+									if (_this.names[index].toLowerCase().indexOf(_this.v_name.toLowerCase()) != -1) {
+										newArr.push(_this.names[index]);
+									}
+								}
+								return newArr;
+							} else {
+								return this.names;	
+							}
+						}
 					}
 				});
 				vm.arrs[1] = 'e';// 不是响应式的
@@ -189,6 +220,16 @@
 				<div v-else>False</div>
 			</div>
 			<div v-else>One False</div>
+			
+			<!--
+				使用计算属性对姓名数组进行过滤
+			-->
+			<p>
+				<input type="text" v-model="v_name" />
+				<ul>
+					<li v-for="name in filterNameByStr">{{name}}</li>
+				</ul>
+			</p>
 		</div>
 	</body>
 

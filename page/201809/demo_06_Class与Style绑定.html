@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 06 Class与Style绑定</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<style type="text/css">
+			.big {
+				font-size: 50px;
+			}
+		</style>
+		<script type="text/javascript">
+			
+			Vue.component('my-component', {
+				template: "<p class='foo bar'>Hi 这里是自定的组件</p>"
+			});
+			
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						isActive: true,
+						hasError: true,
+						classObject: {
+							active: true,
+							'text-danger': true
+						},
+						error: null,
+						activeClass: "active",
+						errorClass: "text-danger",
+						bigClass: "big",
+						activeColor: 'red',
+						fontSize: 30,
+						styleObject: {
+							/**
+							 * 属性值需加单引号
+							 * 属性名不能使用-分割
+							 */
+							color: 'blue',
+							fontSize: '40px'
+						},
+						baseStyles: {
+							/*marginTop: "0px"*/
+						}
+					},
+					methods: {
+						init: function() {
+							
+						}
+					},
+					created: function() {
+						this.init();
+					},
+					/**
+					 * 计算属性
+					 */
+					computed: {
+						classObj: function() {
+							return {
+								active: this.isActive && !this.error,
+								'text-danger': this.error && this.error.type === 'fatal'
+							};
+						}
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<!-- 绑定HTML Class -->
+			<p>
+				<!--
+					对象语法
+				-->
+				<div v-bind:class="{active:isActive}">Hello Vue</div>
+				<div class="static" v-bind:class="{active:isActive, 'text-danger': hasError}">Hello Vue</div>
+				<div v-bind:class="classObject">Hello Vue</div>
+				<div v-bind:class="classObj">Hello Vue</div>
+			</p>
+			<p>
+				<!--
+					数组语法
+				-->
+				<div v-bind:class="[activeClass, errorClass, bigClass]">Hello World!</div>
+				<div v-bind:class="[{active: !isActive}, errorClass]">Hello World!</div>
+				<div v-bind:class="[isActive ? activeClass : '', errorClass]">Hello World!</div>
+			</p>
+			<p>
+				<!--
+					用在组件上
+				-->
+				<my-component class="boo" v-bind:class="{active: isActive}"></my-component>
+			</p>
+			
+			<!-- 
+				绑定内联样式
+				CSS 属性名可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用单引号括起来) 来命名
+				
+				注意：经测试属性名只能使用驼峰式来命名,属性值必须加单引号!
+			 -->
+			<p>
+				<!--
+					对象语法
+				-->
+				<div v-bind:style="{color: activeColor, fontSize: fontSize + 'px'}">Hello Style</div>
+				<div v-bind:style="styleObject">Hello Style</div>
+			</p>
+			<p>
+				<!--
+					数组语法
+				-->
+				<div v-bind:style="[styleObject, baseStyles]">数组语法</div>
+			</p>
+			<p>
+				<!--
+					当 v-bind:style 使用需要添加浏览器引擎前缀的 CSS 属性时，
+						如 transform，Vue.js 会自动侦测并添加相应的前缀。
+					对象语法-当属性名称带单引号时属性名可以使用驼峰方式命名和使用短横线分割,
+						当不使用单引号时使用驼峰方式命名
+				-->
+				<div v-bind:style="{'-webkit-transform': 'rotate(3deg)', 'marginTop': '30px'}">自动添加前缀</div>
+				<div v-bind:style="{transform: 'rotate(3deg)', marginTop: '30px'}">自动添加前缀</div>
+			</p>
+			<p>
+				<!--
+					多重值
+					从 2.3.0 起你可以为 style 绑定中的属性提供一个包含多个值的数组，常用于提供多个带前缀的值
+					这样写只会渲染数组中最后一个被浏览器支持的值。
+					在本例中，如果浏览器支持不带浏览器前缀的 flexbox，那么就只会渲染 display: flex
+				-->
+				<div :style="{display: ['-webkit-box', '-ms-flexbox', 'flex']}">Hello</div>
+			</p>
+		</div>
+	</body>
+
+</html>

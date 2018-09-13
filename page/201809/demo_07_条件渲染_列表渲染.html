@@ -203,7 +203,7 @@
 			<form v-on:submit.prevent="addNewTodo">
 				<label for="new-todo">Add a todo</label>
 				<input v-model="newTodoText" id="new-todo" placeholder="E.g. Feed the cat" />
-				<button type="submit">Add</button>
+				<button>Add</button><!-- 表单提交这里的button不用定义type属性为submit可能默认就是submit吧 -->
 			</form>
 			<ul>
 				<!--

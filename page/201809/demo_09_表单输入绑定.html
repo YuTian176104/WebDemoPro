@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 09 表单输入绑定</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						message: "",
+						multilineMsg: "",
+						singleCheckbox: true,
+						singleCheckbox2: "yes",
+						multiCheckbox: ['john'],
+						picked: "one",
+						one2: "yes",
+						two2: "no",
+						picked2: "no",
+						singleSelect: "",
+						multiSelect: ["B"],
+						selected: "1",
+						options:[{
+							text: "One",
+							value: "1"
+						},{
+							text: "Two",
+							value: "2"
+						},{
+							text: "Three",
+							value: "3"
+						}],
+						input_value_lazy: "",
+						input_value: ""
+					},
+					methods: {
+						init: function() {
+							this.picked2 = "yes";
+						}
+					},
+					created: function() {
+						this.init();
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<p>
+				<!--
+					单行文本框
+				-->
+				<input type="text" v-model="message" placeholder="Edit there..." />
+				<h4>The message is: {{message}}</h4>
+			</p>
+			<p>
+				<!--
+					多行文本
+				-->
+				<textarea v-model="multilineMsg" placeholder="Edit multiline message.."></textarea>
+				<h3 style="white-space: pre-line;">The multiline message is: {{multilineMsg}}</h3>
+			</p>
+			<p>
+				<!--
+					复选框
+					单个复选框绑定到布尔值或者自定义的值
+					多个复选框绑定到同一数组
+				-->
+				<div>
+					<!-- 单个复选框绑定到默认的布尔值 -->
+					<input type="checkbox" id="singleCheckbox" v-model="singleCheckbox" />
+					<label for="singleCheckbox">{{singleCheckbox}}</label>
+				</div>
+				<div>
+					<!-- 单个复选框绑定道自定义的字符串值yes/no -->
+					<input type="checkbox" id="singleCheckbox2" v-model="singleCheckbox2" 
+						true-value="yes" false-value="no" />
+					<label for="singleCheckbox2">{{singleCheckbox2}}</label>
+				</div>
+				<div>
+					<input type="checkbox" id="jack" value="jack" v-model="multiCheckbox" />
+					<label for="jack">Jack</label>
+					<input type="checkbox" id="john" value="john" v-model="multiCheckbox" />
+					<label for="john">John</label>
+					<input type="checkbox" id="mike" value="mike" v-model="multiCheckbox" />
+					<label for="mike">Mike</label>
+					<input type="checkbox" id="alice" value="alice" v-model="multiCheckbox" />
+					<label for="alice">Alice</label>
+					<br />
+					<span>Checked names: {{multiCheckbox}}</span>
+				</div>
+			</p>
+			<p>
+				<!--
+					单选按钮
+				-->
+				<input type="radio" id="one" value="one" v-model="picked" />
+				<label for="one">One</label>
+				<input type="radio" id="two" value="two" v-model="picked" />
+				<label for="two">Two</label>
+				<br />
+				<span>The radio: {{picked}}</span>
+				<br />
+				<!-- 把值绑定到动态属性上 -->
+				<input type="radio" id="one2" v-bind:value="one2" v-model="picked2" />
+				<label for="one2">One2</label>
+				<input type="radio" id="two2" :value="two2" v-model="picked2" />
+				<label for="two2">Two2</label>
+				<br />
+				<span>The radio 2: {{picked2}}</span>
+			</p>
+			<p>
+				<!--
+					选择框
+					单选和多选
+				-->
+				<div>
+					<!--<select v-model="singleSelect">
+						<option value="">请选择</option>
+						<option>A</option>
+						<option>B</option>
+						<option>C</option>
+						<option>D</option>
+					</select>
+					<span>Single selected: {{singleSelect}}</span>-->
+					<!-- 选项框选项的值使用内联对象字面量 -->
+					<select v-model="singleSelect">
+						<option value="">请选择</option>
+						<option v-bind:value="{value:'A'}">A</option>
+						<option :value="{value:'B'}">B</option>
+						<option :value="{value:'C'}">C</option>
+						<option :value="{value:'D'}">D</option>
+					</select>
+					<span>Single selected: {{singleSelect}}</span>
+				</div>
+				<div style="margin-top: 80px;">
+					<select v-model="multiSelect" multiple="multiple" style="width: 60px;">
+						<option>A</option>
+						<option>B</option>
+						<option>C</option>
+						<option>D</option>
+					</select>
+					<span>Multi selected: {{multiSelect}}</span>
+				</div>
+				<br /><br /><br /><br /><br /><br />
+				<select v-model="selected">
+					<option v-for="option in options" v-bind:value="option.value">{{option.text}}</option>
+				</select>
+				<span>Selected: {{selected}}</span>
+			</p>
+			<p>
+				<div>
+					<input type="text" v-model.lazy="input_value_lazy" />{{input_value_lazy}}
+					<br />
+					<input type="text" v-model="input_value" />{{input_value}}
+				</div>
+			</p>
+		</div>
+	</body>
+
+</html>

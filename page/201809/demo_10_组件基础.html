@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 10 组件基础</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<style type="text/css">
+			.demo-alert-box {
+			    padding: 10px 20px;
+			    background: #f3beb8;
+			    border: 1px solid #f09898;
+			}
+			.tab-button {
+				padding: 6px 10px;
+				border-top-left-radius: 3px;
+				border-top-right-radius: 3px;
+				border: 1px solid #ccc;
+				cursor: pointer;
+				background: #f0f0f0;
+				margin-bottom: -1px;
+				margin-right: -1px;
+			}
+			.tab-button:hover {
+			 	background: #e0e0e0;
+			}
+			.tab-button.active {
+			 	background: #e0e0e0;
+			}
+			.tab {
+				border: 1px solid #ccc;
+				padding: 10px;
+			}
+		</style>
+		<script type="text/javascript">
+			/**
+			 * 基本示例
+			 * 组件的data必须是一个函数
+			 */
+			Vue.component('button-counter', {
+				data: function() {
+					return {
+						count: 0
+					};
+				},
+				template: '<button v-on:click="count++">You clicked me {{count}} times.</button>'
+			});
+			
+			/**
+			 * 通过prop向子组件传递数据
+			 */
+			Vue.component('blog-post', {
+				props: ['title'],
+				template: '<h3>{{title}}</h3>'
+			});
+			
+			/**
+			 * 组件接收对象数据
+			 * 通过事件向组件发送信息
+			 */
+			/*Vue.component('blogs-post', {
+				props: ['post'],
+				template: 
+					'<div class="blog-class">' + 
+						'<h3>{{post.title}}</h3>' + 
+						'<div v-html="post.content"></div>' + 
+						'<button v-on:click="$emit(' + "'enlarge-content'" + ')">Enlarge content</button>' +
+						// click事件调用的是blogs-post标签的enlarge-content事件
+					'</div>'
+			});*/
+			
+			/**
+			 * 使用事件抛出一个值
+			 */
+			Vue.component('blogs-post', {
+				props: ['post'],
+				template: 
+					'<div class="blog-class">' + 
+						'<h3>{{post.title}}</h3>' + 
+						'<div v-html="post.content"></div>' + 
+						'<button v-on:click="$emit(' + "'enlarge-content', 2" + ')">Enlarge content</button>' +
+						// click事件触发enlarge-content并传递一个参数, 值为0.1
+					'</div>'
+			});
+			
+			/**
+			 * 自定义组件上使用v-model示例
+			 */
+			Vue.component('custom-input', {
+				props: ['value'],
+				template: '<input v-bind:value="value" v-on:input="$emit(' + "'input', $event.target.value" + ')" />'
+			});
+			
+			/**
+			 * 插槽使用示例
+			 * <slot></slot>
+			 */
+			Vue.component('alert-msg', {
+				template: '<div class="demo-alert-box"><strong>Error!</strong><slot></slot></div>'
+			});
+			
+			/**
+			 * 动态组件示例-注册组件方式一-全局注册
+			 * 注册组件方式二-局部注册-Vue示例对象中使用components属性定义(见下)
+			 */
+			/*Vue.component('tab-home', {
+				template: '<div>Home component.</div>'
+			});
+			Vue.component('tab-posts', {
+				template: '<div>Posts component.</div>'
+			});
+			Vue.component('tab-archive', {
+				template: '<div>Archive component.</div>'
+			});*/
+			
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						title: 'My journey with Vue.',
+						posts: [{
+							id: 1,
+							title: 'My journey with Vue.'
+						},{
+							id: 2,
+							title: 'Blogging with Vue.'
+						},{
+							id: 3,
+							title: 'Why Vue is so fun.'
+						}],
+						posts1: [{
+							id: 4,
+							title: 'My journey with Vue.'
+						},{
+							id: 5,
+							title: 'Blogging with Vue.'
+						},{
+							id: 6,
+							title: 'Why Vue is so fun.'
+						}],
+						posts2: [{
+							id: 7,
+							title: 'My journey with Vue.'
+						},{
+							id: 8,
+							title: 'Blogging with Vue.'
+						},{
+							id: 9,
+							title: 'Why Vue is so fun.'
+						}],
+						posts3: [{
+							id: 10,
+							title: 'My journey with Vue.',
+							content: '<div style="color: red">你好啊,这里是博文的正文部分</div>'
+						},{
+							id: 11,
+							title: 'Blogging with Vue.',
+							content: '<div style="color: red">你好啊,这里是博文的正文部分</div>'
+						},{
+							id: 12,
+							title: 'Why Vue is so fun.',
+							content: '<div style="color: red">你好啊,这里是博文的正文部分</div>'
+						}],
+						postFontSize: 2,
+						searchText : "",
+						tabs: ["Home", "Posts", "Archive"],
+						currentTab: "Home"
+					},
+					methods: {
+						init: function() {
+							
+						},
+						postFontSizeFun: function(postFontSize) {
+							this.postFontSize += postFontSize;
+						}
+					},
+					computed: {
+						currentTabComponent: function() {
+							return "tab-" + this.currentTab.toLowerCase();
+						}
+					},
+					watch: {
+						
+					},
+					created: function() {
+						this.init();
+					},
+					/**
+					 * 注册自定义组件方式二-局部注册
+					 */
+					components: {
+						'tab-home': {
+							template: '<div>Home component.</div>'
+						},
+						'tab-posts': {
+							template: '<div>Posts component.</div>'
+						},
+						'tab-archive': {
+							template: '<div>Archive component.</div>'
+						}
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<p>
+				<!--
+					组件基本示例和组件复用
+				-->
+				<button-counter></button-counter>
+				<button-counter></button-counter>
+				<button-counter></button-counter>
+			</p>
+			<p>
+				<!--
+					通过prop向组件传递数据
+				-->
+				<blog-post title="Hello World!"></blog-post>
+				<blog-post v-bind:title="title"></blog-post>
+				<span>-----------------blog-post-v-for----------------------------------------</span>
+				<blog-post v-for="post in posts" v-bind:key="post.id" v-bind:title="post.title"></blog-post>
+			</p>
+			<span>------------------h3-v-for-------------------------------------</span>
+			<h3 is="blog-post" v-for="post in posts1" v-bind:key="post.id" v-bind:title="post.title"></h3>
+			<span>-------------------div-v-for------------------------------------</span>
+			<div is="blog-post" v-for="post in posts2" v-bind:key="post.id" v-bind:title="post.title"></div>
+			<p>
+				<!--<span>----以对象数据格式传递给组件/通过事件(如$emit)将数据传递给组件-----</span>
+				<blogs-post v-for="post in posts3" v-bind:key="post.id" 
+					v-bind:post="post"
+					v-bind:style="{fontSize: postFontSize + 'px'}"
+					v-on:enlarge-content="postFontSize += 2"></blogs-post>-->
+				
+				<!--<span>----通过事件向组件传递参数--使用$event访问被抛出的这个值---</span>
+				<blogs-post v-for="post in posts3" v-bind:key="post.id" 
+					v-bind:post="post"
+					v-bind:style="{fontSize: postFontSize + 'px'}"
+					v-on:enlarge-content="postFontSize += $event"></blogs-post>-->
+					
+				<span>----通过事件向组件传递参数--使用方法接收---</span>
+				<blogs-post v-for="post in posts3" v-bind:key="post.id" 
+					v-bind:post="post"
+					v-bind:style="{fontSize: postFontSize + 'px'}"
+					v-on:enlarge-content="postFontSizeFun"></blogs-post>
+			</p>
+			<span><h3>input上使用v-model示例</h3></span>
+			<div>
+				&lt;input v-model="searchText" /&gt;
+				等价于
+				&lt;input v-bind:value="searchText" v-on:input="searchText=$event.target.value" /&gt;
+			</div>
+			<p>
+				<br />
+				<input v-model="searchText" />
+				<!-- 等价于 -->
+				<input v-bind:value="searchText" v-on:input="searchText=$event.target.value" />
+				<br />
+				<span>------------自定义组件使用v-model属性---------------------------</span>
+				<br />
+				<!--
+					在自定义的组件上使用v-model属性
+				-->
+				<custom-input v-model="searchText"></custom-input>
+			</p>
+			
+			<p>
+				<alert-msg style="width: 255px;">
+				 	Something bad happened.
+				</alert-msg>
+			</p>
+			
+			<h3>----动态组件示例----</h3>
+			<div>
+				<button v-for="tab in tabs"
+					v-bind:key="tab" v-bind:class="['tab-button', {active: currentTab === tab}]"
+					v-on:click="currentTab = tab">{{tab}}</button>
+			</div>
+			<!--
+				使用计算属性侦听切换动作
+			-->
+			<component v-bind:is="currentTabComponent" class="tab"></component>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 11 prop</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			/**
+			 * HTML 中的特性名是大小写不敏感的，所以浏览器会把所有大写字符解释为小写字符。
+			 * 这意味着当你使用 DOM 中的模板时，
+			 * camelCase (驼峰命名法) 的 prop 名需要使用其等价的 kebab-case (短横线分隔命名) 命名
+			 */
+			
+			/**
+			 * Prop大小写(camelCase VS kebab-case)
+			 */
+			Vue.component('blog-post', {
+				props: ["postTitle"],
+				template: '<h3>{{postTitle}}</h3>'
+			});
+			
+			/**
+			 * Prop类型
+			 * 以对象型式列出props
+			 * 键-属性名称
+			 * 值-属性值的类型
+			 */
+			Vue.component('blog-post1', {
+				props: {
+					postTitle: String,
+					numbers: Number,
+					isPublished: Boolean,
+					commentIds: Array,
+					author: Object
+				},
+				template: '<div><h3>{{postTitle}}</h3><h3>{{numbers}}</h3><h3>{{isPublished}}</h3>' + 
+					'<h3>{{commentIds}}</h3>' + 
+					'<h3>{{author}}</h3>' + 
+					'</div>'
+			});
+			
+			/**
+			 * 单向数据流-父级组件数据改变则将数据传递给子级组件, 不能从子级组件改变其值并将数据传递给父级组件
+			 */
+			/**
+			 * 1.用来传递一个初始值
+			 * 2.使用计算属性对传入的值进行转换(处理)
+			 * 注意: 
+			 * 	 在JavaScript中对象和数组是通过引用传入的, 所以对于一个数组或对象类型的prop来说,
+			 * 在子组件中改变这个对象或者数组本身将会影响到父组件的状态
+			 * 在下面的例子中: 名字为post的prop是对象类型的, 
+			 * 	在计算属性normalizedTitle中改变对象的数据, 
+			 * 	在浏览器控制台vm.obj查看obj对象的信息可以看到被修改了
+			 */
+			Vue.component('prop-demo', {
+				props: ['initialCounter', 'post'],
+				data: function() {
+					return {
+						counter: this.initialCounter
+					};
+				},
+				computed: {
+					normalizedTitle: function() {
+						if (this.post && this.post.title) {
+							// 当是对象类型或者数组类型时, 改变对象数据会影响到父组件的状态
+							this.post.author = "ZHENG.Q";
+							return this.post.title.trim().toUpperCase();
+						} else {
+							return "";
+						}
+					}
+				},
+				template: 
+					'<div>' + 
+						'<h3>{{normalizedTitle}}</h3>' + 
+						'<button @click="counter++">You Clicked {{counter}} times.</button>' + 
+					'</div>'
+			});
+			
+			/**
+			 * Prop验证
+			 * 注意：
+			 * 	prop属性是在组件实例创建之前进行验证的, 所以
+			 * 实例的属性,比如data、computed等在default或者validator函数中是不可用的
+			 */
+			Vue.component('demo-prop2', {
+				props: {
+					// 基础类型的检查 null可以匹配任何类型
+					title: [String, Number],// 可以匹配多个可能的类型
+					id: Number,
+					commentIds: Array,
+					isPublished: Boolean,
+					obj: Object,
+					count: {// 带有默认值的数字
+						type: Number,
+						default: 100
+					},
+					content: {// 必填的字符串
+						type: String,
+						required: true
+					}
+				},
+				template: 
+					'<div>' + 
+						'<h3>{{title}}</h3>'+ 
+						'<div>{{content}}</div>' + 
+						'<span>{{id}}</span><br />' + 
+						'<span>{{isPublished}}</span><br />' + 
+						'<span>总数是: {{count}}</span>' + 
+					'</div>'
+			});
+			
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						post: {
+							title: "This is post title!",
+							postTitle: "This is post title!",
+							author: {
+								name: "ZHENG.Q"
+							},
+							numbers: 64,
+							commentIds: [29,30,34],
+							'is-published': false,
+							initialCounter: 5
+						},
+						obj: {
+							title: 'This is obj title!'
+						},
+						obj2: {
+							title: "Prop验证示例",
+							id: null,
+							commentIds: [1, 2, 3, 4],
+							isPublished: false,
+							obj: {
+								name: '张三',
+								age: 43
+							},
+							content: "这里是内容信息"
+						}
+					},
+					methods: {
+						init: function() {
+							
+						}
+					},
+					computed: {
+						
+					},
+					watch: {
+						
+					},
+					created: function() {
+						this.init();
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<!--
+				Prop大小写示例
+				组件定义时使用camelCase
+				使用组件时属性名使用kebab-case
+			-->
+			<blog-post post-title="hello!"></blog-post>
+			<blog-post1 post-title="hello"></blog-post1><br />
+			<!--
+				以上都是静态传递Prop
+				还可以动态传递Prop
+			-->
+			<blog-post v-bind:post-title="post.title"></blog-post>
+			<blog-post :post-title="post.title + ' by ' + post.author.name"></blog-post>
+			<!--
+				传递字符串
+				传递一个数字
+				传递布尔类型值-默认值是true
+				传递数组
+			-->
+			<blog-post1 v-bind:numbers="post.numbers" v-bind:post-title="post.title"
+				:is-published="false"
+				:comment-ids="[139, 140, 141]"
+				:author="post.author"
+				></blog-post1>
+			<!--
+				传入一个对象的所有属性
+			-->
+			<span>传入一个对象的所有属性--开始</span>
+			<blog-post1 v-bind="post"></blog-post1>
+			<span>传入一个对象的所有属性--结束</span>
+			
+			<p>
+				<span>向组件中传递一个参数-使用计算属性对数据进行处理---开始</span>
+				<!--
+					传递一个初始值
+				-->
+				<prop-demo initial-counter="10" title="hello"></prop-demo>
+				<!--
+					传递对象
+				-->
+				<span>-----------向组件中传递对象-------------</span>
+				<prop-demo initial-counter="10" v-bind:post="obj"></prop-demo>
+				<span>向组件中传递一个参数-使用计算属性对数据进行处理---END</span>
+			</p>
+			
+			<p>
+				<!--
+					Prop验证
+				-->
+				<span>-----Prop验证示例-----Start----</span>
+				<demo-prop2 :title="obj2.title" :id="obj2.id"
+					:content="obj2.content"></demo-prop2>
+				<span>-----Prop验证示例-----End----</span>
+			</p>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 12 自定义事件</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			
+			/**
+			 * 事件名称推荐使用kebab-case
+			 * 
+			 * 详细的内容查看官方文档
+			 * 自定义组件的v-model
+			 * 将原生事件绑定到组件
+			 * .sync修饰符
+			 * 
+			 */
+			
+			/**
+			 * 自定义组件的v-model示例
+			 * 一个组件上的v-model默认会利用名为value的prop和名为input的事件, 但是
+			 * 像单选框、复选框等类型的输入控件可能会将value特性用于不同的目的。
+			 * model选项可以用来避免这样的冲突
+			 */
+			Vue.component('base-checkbox', {
+				model: {
+					prop: 'checked',
+					event: 'change'
+				},
+				props: {
+					checked: Boolean
+				},
+				template: 
+					'<input type="checkbox" ' + 
+						'v-bind:checked="checked" ' +
+						'v-on:change="$emit(' + "'change', $event.target.checked" + ')" />'
+			});
+			
+			/**
+			 * 插槽内容
+			 * Vue实现了一套内容分发的API, 并将<slot>元素作为承载分发内容的出口
+			 * <slot></slot>插槽内可以包含任何模板代码, 包括HTML甚至其他的组件
+			 * 如果组件中没有包含<slot></slot>元素则传入组件的内容将会被抛弃
+			 */
+			
+			/**
+			 * 具名插槽
+			 */
+			
+			/**
+			 * 插槽的默认内容
+			 */
+			Vue.component('base-submit', {
+				template: '<button type="submit"><slot>Submit</slot></button>'
+			});
+			
+			Vue.component('todo-list', {
+				props: ['todos'],
+				template: 
+					'<ul>' + 
+						'<li v-for="todo in todos" v-bind:key="todo.id">' + 
+							'<slot v-bind:item="todo"></slot>' + 
+						'</li>' + 
+					'</ul>'
+			});
+			
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						lovingVue: false,
+						hobby: true,
+						todos: [{
+							id: 1,
+							text: "Hello World!",
+							isComplete: true
+						},{
+							id: 2,
+							text: "Ni hao",
+							isComplete: false
+						}]
+					},
+					methods: {
+						init: function() {
+							
+						}
+					},
+					computed: {
+						
+					},
+					watch: {
+						
+					},
+					created: function() {
+						this.init();
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<base-checkbox v-model="lovingVue"></base-checkbox>
+			<input type="checkbox" v-model="hobby" />
+			<p>
+				<!--
+					插槽的默认内容
+				-->
+				<base-submit>Save</base-submit>
+			</p>
+			<p>
+				<todo-list v-bind:todos="todos">
+					<template slot-scope="slotObj">
+						{{slotObj.item.text}}
+						<span v-if="slotObj.item.isComplete">√</span>
+					</template>
+				</todo-list>
+			</p>
+			<p>
+				<!--
+					解构slot-scope
+				-->
+				<todo-list v-bind:todos="todos">
+					<template slot-scope="{item}">
+						{{item.text}}
+						<span v-if="item.isComplete">√</span>
+					</template>
+				</todo-list>
+			</p>
+		</div>
+	</body>
+
+</html>

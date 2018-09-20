@@ -120,10 +120,11 @@
 				<!--
 					当 v-bind:style 使用需要添加浏览器引擎前缀的 CSS 属性时，
 						如 transform，Vue.js 会自动侦测并添加相应的前缀。
-					对象语法-当属性名称带单引号时属性名可以使用驼峰方式命名和使用短横线分割,
-						当不使用单引号时使用驼峰方式命名
+					对象语法-
+						当属性名称 带单引号时 属性名可以使用驼峰方式命名和使用短横线分割,
+						当 不使用单引号时 使用驼峰方式命名
 				-->
-				<div v-bind:style="{'-webkit-transform': 'rotate(3deg)', 'marginTop': '30px'}">自动添加前缀</div>
+				<div v-bind:style="{'-webkit-transform': 'rotate(3deg)', 'margin-top': '30px'}">自动添加前缀</div>
 				<div v-bind:style="{transform: 'rotate(3deg)', marginTop: '30px'}">自动添加前缀</div>
 			</p>
 			<p>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 15 过渡</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<style type="text/css">
+			.fade-demo-enter-active, .fade-demo-leave-active {
+			  transition: opacity 1s;
+			}
+			.fade-demo-enter, .fade-demo-leave-to /* .fade-leave-active below version 2.1.8 */ {
+			  opacity: 0;
+			}
+		</style>
+		<script type="text/javascript">
+			var vm = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						show: true
+					},
+					methods: {
+						init: function() {
+							
+						}
+					},
+					computed: {
+						
+					},
+					watch: {
+						
+					},
+					created: function() {
+						this.init();
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<!--
+				单元素或者组件的过渡
+				Vue提供多的transition组件
+			-->
+			<button v-on:click="show = !show">Toggle</button>
+			<!--
+				如果没有定义name属性默认使用v-前缀, 否则使用对应的name名称加-前缀
+				如一下示例中的fade-demo-
+			-->
+			<transition name="fade-demo">
+				<div v-if="show" style="font-weight: bold; font-size: 30px;">Hello World!</div>
+			</transition>
+			
+			<!--
+				CSS过渡
+				常用的过渡都是使用CSS过渡
+			-->
+		</div>
+	</body>
+
+</html>

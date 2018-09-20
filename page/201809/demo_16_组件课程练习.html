@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo 16 组件视频练习</title>
+		<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		
+		<script type="text/x-template" id="xTemplateDemo">
+			<div>
+				<h6>使用text/x-template类型的script定义模板</h6>
+				<div>全局注册组件</div>
+			</div>
+		</script>
+		
+		<script type="text/javascript">
+			
+			/*Vue.component('my-component-demo', {
+				template: '<div>全局注册组件</div>'
+			});*/
+			
+			Vue.component('my-component-demo', {
+				template: '#xTemplateDemo'
+			});
+			
+			var MyComponent2 = Vue.extend({
+				props: ['messageInfo'],
+				data: function() {
+					return {
+						msg: this.messageInfo,
+						msg2: "MyComponent Two."
+					};
+				},
+				//template: '<div>{{msg}}</div>'
+				template: '#templateDemo'
+			});
+			var Parent = Vue.extend({
+				components: {
+					'my-component-demo': {
+						template: '<div>在构造器中, 局部注册的组件</div>'
+					},
+					'my-component-demo2': MyComponent2
+				}
+			});
+			
+			var vm = null;
+			var parent = null;
+			$(function() {
+				vm = new Vue({
+					el: "#app",
+					data: {
+						
+					},
+					methods: {
+						init: function() {
+							
+						}
+					},
+					computed: {
+						
+					},
+					watch: {
+						
+					},
+					created: function() {
+						this.init();
+					}
+				});
+				
+				parent = new Parent({
+					el: "#bpp",
+					data: {
+						firstName: "Walter",
+						lastName: "White",
+						alias: "Heisenberg"
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<h3>vm</h3>
+			<my-component-demo></my-component-demo>
+		</div>
+		<span>-------------------------------------------------</span>
+		<div id="bpp">
+			<h3>vm2</h3>
+			<my-component-demo></my-component-demo>
+			<p>
+				{{firstName}}-{{lastName}}:{{alias}}
+			</p>
+			<!--
+				prop使用camelCase但是标签中属性必须使用kebab-case
+			-->
+			<my-component-demo2 message-info="Hello"></my-component-demo2>
+		</div>
+		
+		<template id="templateDemo">
+			<div>
+				<h5>使用template标签定义的模板</h5>
+				{{msg}}
+				<h5>{{messageInfo}}</h5>
+			</div>
+		</template>
+	</body>
+
+</html>
